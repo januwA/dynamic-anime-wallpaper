@@ -1,0 +1,26 @@
+{
+  "name": "dynamic-anime-wallpaper",
+  "version": "1.0.0",
+  "description": "dynamic anime wallpaper in windows",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "pm2": "^4.5.1"
+  },
+  "scripts": {
+    "logs": "./node_modules/.bin/pm2 logs",
+    "stop": "./node_modules/.bin/pm2 stop anime-wallpaper",
+    "start": "./node_modules/.bin/pm2 start index.js --name anime-wallpaper "
+  },
+  "keywords": [
+    "dynamic-anime-wallpaper",
+    "Ajanuw"
+  ],
+  "author": "Ajanuw",
+  "license": "MIT",
+  "homepage": "https://github.com/januwA/dynamic-anime-wallpaper",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/januwA/dynamic-anime-wallpaper.git"
+  }
+}
