@@ -57,10 +57,10 @@ add-type $code
     return new Promise((_res, _rej) => {
       https.get(imgUrl, (res) => {
         const ext = path.extname(imgUrl);
-        const filename = "./wallpaper" + ext;
+        const localpath = path.resolve(__dirname, "./wallpaper" + ext);
         res
-          .pipe(fs.createWriteStream(filename))
-          .on("close", () => _res(path.resolve(__dirname, filename)))
+          .pipe(fs.createWriteStream(localpath))
+          .on("close", () => _res(localpath))
           .on("error", _rej);
       });
     });

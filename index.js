@@ -13,8 +13,7 @@ const {
 } = require("./util");
 
 const ANIME_BASE_URL = "https://www.wallpapermaiden.com/category/anime";
-const PS1_FINENAME = "SetWall.ps1";
-const PS1_PATH = path.resolve(__dirname, PS1_FINENAME);
+const PS1_PATH = path.resolve(__dirname, "SetWall.ps1");
 
 let newImage = "";
 
@@ -35,7 +34,7 @@ async function handle() {
     const localpath = await download(imgLink);
     console.log("local path: %s", localpath);
 
-    await create_ps1(localpath, PS1_FINENAME);
+    await create_ps1(localpath, PS1_PATH);
     exec(`powershell.exe ${PS1_PATH}`, (err) => {
       if (err) console.error(err);
       console.log("set wallpaper success.");
