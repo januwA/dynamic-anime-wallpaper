@@ -9,46 +9,39 @@ const {
   get,
   getWallpaperImage,
   getImageSize,
+  getFirstImage,
 } = require("./util");
 
 const ANIME_BASE_URL = "https://www.wallpapermaiden.com/category/anime";
 const PS1_FINENAME = "SetWall.ps1";
 const PS1_PATH = path.resolve(__dirname, PS1_FINENAME);
-const MS = 1000 * 60 * 60 * 3; // 3小时
 
 let newImage = "";
-let errorCount = 0;
 
 handle();
-setInterval(handle, MS); // 每隔3小时检查一次
+setInterval(handle, 1000 * 60 * 10); // 每隔10分钟
 
 async function handle() {
   try {
     const data = await get(ANIME_BASE_URL);
-    const m = data.match(
-      /<div\s*class="wallpaperBg">\s*<a href="([^"]+)" title=/
-    );
-    if (m && m[1]) {
-      if (newImage === m[1]) return console.log("is not update.");
-      newImage = m[1];
-      const size = getImageSize(data) ?? "1920x1080";
-      const imgUrl = await getWallpaperImage(newImage + "/download/" + size);
-      console.log("imgUrl: %s", imgUrl);
-      if (imgUrl) {
-        const localpath = await download(imgUrl);
-        console.log("localpath: %s", localpath);
-        await create_ps1(localpath, PS1_FINENAME);
-        exec(`powershell.exe ${PS1_PATH}`, (err) => {
-          if (err) console.error(err);
-        });
-        errorCount = 0;
-      }
-    }
+    const firstImage = getFirstImage(data);
+    if (!firstImage) return console.error("is not find new image.");
+    if (newImage === firstImage) return console.error("is not update.");
+    const size = getImageSize(data);
+    const imgLink = await getWallpaperImage(firstImage + "/download/" + size);
+    if (!imgLink) return console.error("not find image download link.");
+
+    console.log("start download image: %s", imgLink);
+    const localpath = await download(imgLink);
+    console.log("local path: %s", localpath);
+
+    await create_ps1(localpath, PS1_FINENAME);
+    exec(`powershell.exe ${PS1_PATH}`, (err) => {
+      if (err) console.error(err);
+      console.log("set wallpaper success.");
+      newImage = firstImage;
+    });
   } catch (error) {
     console.error(error);
-    // 出现了任何错误直接重试
-    errorCount++;
-    if (errorCount < 100) await handle();
-    else errorCount = 0;
   }
 }

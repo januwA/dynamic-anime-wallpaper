@@ -3,30 +3,14 @@ const fs = require("fs");
 const path = require("path");
 const axios = require("axios");
 
-axios.defaults.timeout = 7000;
-
-let count = 0;
-
 /**
  * 发送https.get请求
  * @param {string} url
  */
 const get = async function get(url) {
-  try {
-    const { data, status } = await axios.get(url);
-    console.log("%s statusCode is %d", url, status);
-    count = 0;
-    return data;
-  } catch (error) {
-    if (error?.code === "ECONNABORTED") {
-      console.log("%s timeout.", url);
-      count++;
-      if (count < 100) return await get(url);
-      else count = 0;
-    } else {
-      throw error;
-    }
-  }
+  const { data, status } = await axios.get(url);
+  console.log("%s statusCode is %d", url, status);
+  return data;
 };
 module.exports = {
   get,
@@ -37,6 +21,7 @@ module.exports = {
    */
   async create_ps1(localpath, filename) {
     return new Promise((_res, _rej) => {
+      if (fs.existsSync(filename)) return _res();
       fs.writeFile(
         filename,
         `$imgPath="${localpath}"
@@ -101,7 +86,13 @@ add-type $code
     const m = data.match(
       /<div class="wallpaperBgRes wallpaperBgDefault">(\d+x\d+)<\/div>/
     );
-    if (!m) return;
-    return m[1];
+    return m[1] ?? "1920x1080";
+  },
+
+  getFirstImage(data) {
+    const m = data.match(
+      /<div\s*class="wallpaperBg">\s*<a href="([^"]+)" title=/
+    );
+    if (m && m[1]) return m[1];
   },
 };
