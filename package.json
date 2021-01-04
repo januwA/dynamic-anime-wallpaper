@@ -10,7 +10,8 @@
   "scripts": {
     "logs": "./node_modules/.bin/pm2 logs",
     "stop": "./node_modules/.bin/pm2 stop anime-wallpaper",
-    "start": "./node_modules/.bin/pm2 start index.js --name anime-wallpaper "
+    "start": "./node_modules/.bin/pm2 start index.js --name anime-wallpaper",
+    "list": "./node_modules/.bin/pm2 list"
   },
   "keywords": [
     "dynamic-anime-wallpaper",

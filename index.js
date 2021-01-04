@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const path = require("path");
-const exec = require("child_process").exec;
+const { exec } = require("child_process");
 
 const {
   create_ps1,
@@ -24,9 +24,11 @@ async function handle() {
   try {
     const data = await get(ANIME_BASE_URL);
     const firstImage = getFirstImage(data);
-    if (!firstImage) return console.error("is not find new image.");
-    if (newImage === firstImage) return console.error("is not update.");
+    if (!firstImage) return console.error;
+    ("Error: is not find new image.");
+    if (newImage === firstImage) return console.log("is not update.");
     const size = getImageSize(data);
+    console.log("New Image Size: %s", size);
     const imgLink = await getWallpaperImage(firstImage + "/download/" + size);
     if (!imgLink) return console.error("not find image download link.");
 
@@ -36,11 +38,11 @@ async function handle() {
 
     await create_ps1(localpath, PS1_PATH);
     exec(`powershell.exe ${PS1_PATH}`, (err) => {
-      if (err) console.error(err);
+      if (err) return console.error(err);
       console.log("set wallpaper success.");
       newImage = firstImage;
     });
   } catch (error) {
-    console.error(error);
+    console.error("Handle Error: %s", error.message);
   }
 }

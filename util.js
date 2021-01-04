@@ -21,16 +21,15 @@ module.exports = {
    */
   async create_ps1(localpath, filename) {
     return new Promise((_res, _rej) => {
-      if (fs.existsSync(filename)) return _res();
       fs.writeFile(
         filename,
         `$imgPath="${localpath}"
-$code = @' 
+$code = @'
 using System.Runtime.InteropServices; 
 namespace Win32{ 
      public class Wallpaper{ 
         [DllImport("user32.dll", CharSet=CharSet.Auto)] 
-         static extern int SystemParametersInfo (int uAction , int uParam , string lpvParam , int fuWinIni) ; 
+         static extern int SystemParametersInfo (int uAction , int uParam , string lpvParam , int fuWinIni); 
          public static void SetWallpaper(string thePath){ 
             SystemParametersInfo(20,0,thePath,3); 
          }
